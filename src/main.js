@@ -16,12 +16,21 @@ function onSubmit(event) {
 
   const inputQuery = event.currentTarget.elements['search-text'].value.trim();
 
+  if (!inputQuery) {
+    iziToast.warning({
+      title: '',
+      message: 'Please enter a search query!',
+    });
+    hideLoader();
+    return;
+  }
+
+  clearGallery();
+
   getImagesByQuery(inputQuery)
-    .then(response => {
-      clearGallery();
-      createGallery(response.hits);
+    .then(images => {
       hideLoader();
-      if (response.hits.length === 0) {
+      if (images.length === 0) {
         iziToast.error({
           title: '',
           message:
@@ -30,9 +39,16 @@ function onSubmit(event) {
 
         return;
       }
+      createGallery(images);
     })
     .catch(error => {
-      console.log(error);
+      iziToast.error({
+        title: 'Error',
+        message: 'Something went wrong. Please try again later!',
+      });
     })
-    .finally(formEl.reset());
+    .finally(() => {
+      hideLoader();
+      formEl.reset();
+    });
 }
