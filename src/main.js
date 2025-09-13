@@ -29,7 +29,6 @@ function onSubmit(event) {
 
   getImagesByQuery(inputQuery)
     .then(images => {
-      hideLoader();
       if (images.length === 0) {
         iziToast.error({
           title: '',
